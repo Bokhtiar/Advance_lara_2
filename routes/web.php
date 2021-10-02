@@ -16,3 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Route::get('get-user-type', function()
+// {
+//     dd(config('global.user_type'));
+// });
+Route::get('get-user-type', function()
+{
+    dd(config('global.pagination_records'));
+});
