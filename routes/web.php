@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TodosController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,3 +27,11 @@ Route::get('get-user-type', function()
 {
     dd(config('global.pagination_records'));
 });
+
+Route::resource('todos', TodosController::class);
+
+
+Route::post('/todo/store', [App\Http\Controllers\TodosController::class, 'store']);
+
+
+Route::resource('student', StudentController::class);
