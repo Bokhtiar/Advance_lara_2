@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
@@ -34,7 +36,31 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'phone' => 'required',
+            'email' => 'required',
+            'course' => 'required',
+
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->messages(),
+            ]);
+        }else{
+            $studnet =  new student;
+            $studnet->name = $request->name;
+            $studnet->phone = $request->phone;
+            $studnet->email = $request->email;
+            $studnet->course = $request->course;
+            $studnet->save();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Added Successfully',
+            ]);
+        }
     }
 
     /**
