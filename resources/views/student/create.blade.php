@@ -31,24 +31,29 @@
     <form action="">
         <ul>
         </ul>
+
         <div class="form-group">
+            <input type="hidden" name=""  id="student_id">
             <label for="">name</label>
-            <input class="form-control" type="text" name="name" id="name">
+            <input  class="form-control" type="text" name="name" id="name">
         </div>
         <div class="form-group">
             <label for="">phone</label>
-            <input class="form-control" type="text" name="phone" id="phone">
+            <input class="form-control"  type="text" name="phone" id="phone">
         </div>
         <div class="form-group">
             <label for="">email</label>
-            <input class="form-control" type="email" name="email" id="email">
+            <input class="form-control"  type="email" name="email" id="email">
         </div>
         <div class="form-group">
             <label for="">course</label>
-            <input class="form-control" type="text" name="course" id="course">
+            <input class="form-control"  type="text" name="course" id="course">
         </div>
         <div class="form-group">
-            <input type="submit" class="btn btn-primary add_student" name="" id="">
+            <input type="submit" class="btn btn-primary add_student" value="submit" name="" id="">
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary update_student" value="Update" name="" id="">
         </div>
     </form>
 
@@ -81,6 +86,8 @@
                         <td>'+item.phone+'</td>\
                         <td>'+item.email+'</td>\
                         <td>'+item.course+'</td>\
+                        <td> <button value="'+item.id+'" class="btn btn-primary edit"> edit </button> </td>\
+                        <td> <button value="'+item.id+'" class="btn btn-danger delete"> delete </button> </td>\
                         </tr>')
                     })
                 }
@@ -109,11 +116,74 @@
                         $('ul').text(response.message)
                         getData();
                     }
-
                 }
 
             })
         })//store
+
+        $(document).on('click', '.edit', function(e){
+            e.preventDefault();
+            var id = $(this).val();
+            if(id){
+                $.ajax({
+                    url: '/students/edit/' + id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success:function(response){
+                        console.log(response.edit)
+                        $('#student_id').val(response.edit.id)
+                        $('#name').val(response.edit.name)
+                        $('#phone').val(response.edit.phone)
+                        $('#email').val(response.edit.email)
+                        $('#course').val(response.edit.course)
+                    }
+                })
+            }
+        })//edit done
+
+        $(document).on('click','.update_student', function(e){
+            e.preventDefault();
+            var id = $('#student_id').val();
+            var data = {
+                'name' :  $('#name').val(),
+                'phone' :  $('#phone').val(),
+                'email' :  $('#email').val(),
+                'course' :  $('#course').val(),
+            }
+            if(id){
+                $.ajax({
+                    url:'/students/update/'+id,
+                    type: 'POST',
+                    data: data,
+                    dataType: 'JSON',
+                    success:function(response){
+                        if(response.errors == 400){
+                            $.each(response.errors, function(key, item){
+                            $('ul').append('<li>'+item+'</li>')
+                            })
+                        }else{
+                            $('ul').text('update successfully')
+                            getData()
+                        }
+
+                    }
+                })
+            }
+        })//update
+
+        $(document).on('click', '.delete', function(e){
+            e.preventDefault()
+            var id = $(this).val()
+            $.ajax({
+                url:'/students/delete/'+id,
+                type:'GET',
+                dataType: 'json',
+                success:function(response){
+                    getData()
+                }
+            })
+        })
+
 
     </script>
 

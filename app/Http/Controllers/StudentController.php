@@ -86,7 +86,12 @@ class StudentController extends Controller
      */
     public function edit($id)
     {
-        //
+        $edit = student::find($id);
+        return response()->json([
+            'edit' => $edit,
+            'status' => 200,
+            'message' => 'student details'
+        ]);
     }
 
     /**
@@ -98,7 +103,31 @@ class StudentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'phone' => 'required',
+            'email' => 'required',
+            'course' => 'required',
+
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->messages(),
+            ]);
+        }else{
+            $studnet = student::find($id);
+            $studnet->name = $request->name;
+            $studnet->phone = $request->phone;
+            $studnet->email = $request->email;
+            $studnet->course = $request->course;
+            $studnet->save();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Added Successfully',
+            ]);
+        }
     }
 
     /**
@@ -107,8 +136,12 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function delete($id)
     {
-        //
+        $studnet = student::find($id)->delete();
+        return response()->json([
+            'status'=> 200,
+            'message'=> 'delete successfully'
+        ]);
     }
 }
