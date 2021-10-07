@@ -36,3 +36,5 @@ Route::post('/todo/store', [App\Http\Controllers\TodosController::class, 'store'
 
 Route::resource('student', StudentController::class);
 Route::post('/student/store', [App\Http\Controllers\StudentController::class, 'store']);
+Route::get('/students', [App\Http\Controllers\StudentController::class, 'index']);
+

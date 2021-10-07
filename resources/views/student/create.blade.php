@@ -8,9 +8,25 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Hello, world!</title>
+    <title>ajax crud</title>
   </head>
   <body>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">index</th>
+            <th scope="col">name</th>
+            <th scope="col">phone</th>
+            <th scope="col">email</th>
+            <th scope="col">course</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+<br><br><br><br>
 
     <form action="">
         <ul>
@@ -24,11 +40,11 @@
             <input class="form-control" type="text" name="phone" id="phone">
         </div>
         <div class="form-group">
-            <label for="">name</label>
-            <input class="form-control" type="email" name="name" id="email">
+            <label for="">email</label>
+            <input class="form-control" type="email" name="email" id="email">
         </div>
         <div class="form-group">
-            <label for="">name</label>
+            <label for="">course</label>
             <input class="form-control" type="text" name="course" id="course">
         </div>
         <div class="form-group">
@@ -43,13 +59,33 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script>
 
-                $.ajaxSetup({
-                    headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                });
+        $.ajaxSetup({
+            headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+        });
 
-
+        getData();
+        function getData(){
+            $.ajax({
+                url: '/students',
+                type: 'GET',
+                dataType: 'json',
+                success:function(response){
+                    console.log(response.students)
+                    $('tbody').html("")
+                    $.each(response.students, function(key, item){
+                        $('tbody').append('<tr>\
+                        <td>'+item.id+'</td>\
+                        <td>'+item.name+'</td>\
+                        <td>'+item.phone+'</td>\
+                        <td>'+item.email+'</td>\
+                        <td>'+item.course+'</td>\
+                        </tr>')
+                    })
+                }
+            });
+        }
         $(document).on('click', '.add_student', function(e){
             e.preventDefault();
             var data = {
@@ -59,21 +95,26 @@
                 'course' :  $('#course').val(),
             }
 
-
-
             $.ajax({
                 url : '/student/store',
                 type: 'POST',
                 data: data,
                 dataType: 'json',
                 success:function(response){
-                    $.each(response.errors, function(key, data){
+                    if(response.status == 400){
+                        $.each(response.errors, function(key, data){
                         $('ul').append('<li>'+data+'</li>')
-                    })
+                        })
+                    }else{
+                        $('ul').text(response.message)
+                        getData();
+                    }
+
                 }
 
             })
-        })
+        })//store
+
     </script>
 
 
